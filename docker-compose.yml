@@ -67,16 +67,14 @@ services:
   #Storage1
   storage1:
     image: atmoz/sftp
-    # restart: unless-stopped
-    # tty: true
     container_name: storage1
     volumes:
         - ./storage1:/home/ds/storage1
-    # environment:
-    #   SERVICE_NAME: storage1
     ports:
         - "2220:22"
     command: ds:ds:::storage1
+    networks:
+      - app-network
 
   #Storage2
   storage2:
@@ -87,6 +85,8 @@ services:
     ports:
         - "2221:22"
     command: ds:ds:::storage2
+    networks:
+      - app-network
 
   #Storage3
   storage3:
@@ -97,6 +97,8 @@ services:
     ports:
         - "2222:22"
     command: ds:ds:::storage3
+    networks:
+      - app-network
 
 #Docker Networks
 networks:

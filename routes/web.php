@@ -1,5 +1,7 @@
 <?php
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,4 +31,8 @@ Route::get('upload', function () {
     return view("uploadFile");
 })->middleware('auth');
 
-Route::post('uploadfile','HomeController@uploadFilePost');
+Route::post('uploadfile','HomeController@uploadFilePost')->middleware('auth');
+
+Route::get('/del', function(){
+    Storage::disk('storage2')->delete('IMG_20191104_080220.jpeg');
+});

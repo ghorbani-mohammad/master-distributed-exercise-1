@@ -67,13 +67,22 @@ return [
         'storage1' => [
             'driver' => 'sftp',
             'host' => 'storage1',
-            'port' => 21,
-            'username' => 'username',
-            'password' => 'password',
-            'privateKey' => 'path/to/or/contents/of/privatekey',
-            'root' => '/data',
+            'port' => 22,
+            'username' => 'ds',
+            'password' => 'ds',
+            'root' => './storage1',
             'timeout' => 10,
         ],
+        'storage2' => [
+            'driver' => 'sftp',
+            'host' => 'storage2',
+            'port' => 22,
+            'username' => 'ds',
+            'password' => 'ds',
+            'root' => './storage2',
+            'timeout' => 10,
+        ],
+
 
     ],
 

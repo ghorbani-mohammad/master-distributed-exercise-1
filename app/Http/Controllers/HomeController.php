@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Storage;
+use Log;
+use App\File;
 
 class HomeController extends Controller
 {
@@ -23,17 +26,24 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $files = File::all();
+        return view('home', compact('files'));
     }
 
     public function uploadFilePost(Request $request)
     {
         $request->validate([
-            'fileToUpload' => 'required|file|max:1024',
+            'fileToUpload' => 'required|file',
         ]);
 
-        $request->fileToUpload->store('logos');
-
-        return back()->with('success','You have successfully upload image.');
+        Storage::disk('storage1')->putFileAs('', $request->fileToUpload, $request->fileToUpload->getClientOriginalName());
+        Storage::disk('storage2')->putFileAs('', $request->fileToUpload, $request->fileToUpload->getClientOriginalName());
+        auth()->user()->files()->create([
+            'file_name' => $request->fileToUpload->getClientOriginalName(),
+            'file_size' => 'sdjfl',
+            'file_hash' => 'ljsljfls'
+        ]);
+    
+        return back()->with('success','You have successfully uploaded the file.');
     }
 }
