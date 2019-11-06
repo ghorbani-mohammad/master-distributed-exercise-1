@@ -1,0 +1,108 @@
+version: '3'
+services:
+
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laravel/php-7.3
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  #MySQL Service
+  db:
+    image: mysql:8.0.17
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ds
+      MYSQL_ROOT_PASSWORD: sal13883
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+  #PHPMyAdmin Service
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8081:80"
+    networks:
+      - app-network
+  
+  #Storage1
+  storage1:
+    image: atmoz/sftp
+    # restart: unless-stopped
+    # tty: true
+    container_name: storage1
+    volumes:
+        - ./storage1:/home/ds/storage1
+    # environment:
+    #   SERVICE_NAME: storage1
+    ports:
+        - "2220:22"
+    command: ds:ds:::storage1
+
+  #Storage2
+  storage2:
+    image: atmoz/sftp
+    container_name: storage2
+    volumes:
+        - ./storage2:/home/ds/storage2
+    ports:
+        - "2221:22"
+    command: ds:ds:::storage2
+
+  #Storage3
+  storage3:
+    image: atmoz/sftp
+    container_name: storage3
+    volumes:
+        - ./storage3:/home/ds/storage3
+    ports:
+        - "2222:22"
+    command: ds:ds:::storage3
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+#Volumes
+volumes:
+  dbdata:
+    driver: local
