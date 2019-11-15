@@ -59,7 +59,11 @@
                                 <span class="badge badge-primary">You</span>
                             </td>
                             <td>
-                                <a style="color:white;" href="/file/{{$file->id}}/delete" class="btn btn-danger btn-sm" role="button">Delete</a>
+                                <form method="post" action="/file/{{$file->id}}/delete">
+                                    @method('delete')
+                                    @csrf
+                                    <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                                </form>
                             </td>
                         @else
                             <td class="text-success font-weight-bold">{{\App\User::find($file->user_id)->name}}</td>

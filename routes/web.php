@@ -15,11 +15,11 @@ use App\File_Resource;
 |
 */
 
+Auth::routes();
+
 Route::get('/', function () {
     return view('welcome');
 });
-
-Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -35,7 +35,7 @@ Route::get('file/{id}/download', function($id){
     return view('fileDownload', compact('parts', 'file'));
 });
 
-Route::get('file/{id}/delete', function($id){
+Route::delete('file/{id}/delete', function($id){
     $file = File_Resource::where('id', $id)->first();
     if(Auth::id()==$file->user_id){
         Storage::disk('storage1')->delete($file->file_dir);        
