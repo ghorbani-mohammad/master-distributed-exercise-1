@@ -81,7 +81,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Distributed Systems
+                    Distributed File Systems
                 </div>
             </div>
         </div>

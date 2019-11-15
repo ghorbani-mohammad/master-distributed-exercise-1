@@ -64,39 +64,29 @@ services:
     networks:
       - app-network
   
-  #Storage1
+  # #Storage1
   storage1:
-    image: atmoz/sftp
+    image: aali361/file_server_v8
     container_name: storage1
     volumes:
         - ./storage1:/home/ds/storage1
     ports:
         - "2220:22"
-    command: ds:ds:::storage1
+        - "81:80"
+    command: "ds:ds:::storage1"
     networks:
       - app-network
 
-  #Storage2
+  # #Storage2
   storage2:
-    image: atmoz/sftp
+    image: aali361/file_server_v9
     container_name: storage2
     volumes:
         - ./storage2:/home/ds/storage2
     ports:
         - "2221:22"
-    command: ds:ds:::storage2
-    networks:
-      - app-network
-
-  #Storage3
-  storage3:
-    image: atmoz/sftp
-    container_name: storage3
-    volumes:
-        - ./storage3:/home/ds/storage3
-    ports:
-        - "2222:22"
-    command: ds:ds:::storage3
+        - "82:80"
+    command: "ds:ds:::storage2"
     networks:
       - app-network
 
