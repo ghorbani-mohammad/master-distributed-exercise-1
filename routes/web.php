@@ -1,6 +1,7 @@
 <?php
 
 use App\File_Partition;
+use App\File_Resource;
 
 
 /*
@@ -29,24 +30,24 @@ Route::get('upload', function () {
 Route::post('uploadfile','HomeController@uploadFilePost')->middleware('auth');
 
 Route::get('file/{id}/download', function($id){
-    $file = App\File_Resource::where('id', $id)->first();
-    $parts = File_Partition::where('file__resource_id', $id)->select('partition', 'size')->get()->unique('partition');
+    $file = File_Resource::where('id', $id)->first();
+    $parts = File_Partition::where('file__resource_id', $id)->get()->unique('partition');
     return view('fileDownload', compact('parts', 'file'));
 });
 
 Route::get('file/{id}/delete', function($id){
-    $file = App\File_Resource::where('id', $id)->first();
-    // return $file;
+    $file = File_Resource::where('id', $id)->first();
     if(Auth::id()==$file->user_id){
         Storage::disk('storage1')->delete($file->file_dir);        
         Storage::disk('storage2')->delete($file->file_dir);
         $file->file_partitions()->delete();
         $file->delete();
-        
     }
-    return $id;
+    return redirect('/home')->with('success','You have successfully Deleted the file.');
 })->middleware('auth');
 
-Route::post('search', fucntion(){
-
+Route::post('search', function(){
+    $query = request()['q'];
+    $files = File_Resource::where('file_name','LIKE','%'.$query.'%')->get();
+    return view('searchResult', compact('files'));
 });

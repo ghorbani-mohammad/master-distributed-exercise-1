@@ -41,7 +41,7 @@ class HomeController extends Controller
         ]);
         $result = array();
         $random_dir = substr(md5(mt_rand()), 0, 20);
-        Log::info($random_dir);
+        // Log::info($random_dir);
         exec("mkdir ".$random_dir);
         Storage::disk('local')->putFileAs('temp_storage', $request->fileToUpload, $request->fileToUpload->getClientOriginalName());
         $stored_file = auth()->user()->files()->create([
@@ -50,10 +50,11 @@ class HomeController extends Controller
             'file_hash' => hash_file('md5', $request->fileToUpload),
             'file_dir' =>$random_dir,
         ]);
-        Log::info($stored_file->id);
+        // Log::info($stored_file->id);
         $command_string = 'split  -b 2M /var/www/storage/app/temp_storage/'.$request->fileToUpload->getClientOriginalName().' ./'.$random_dir.'/file';
         exec($command_string);
         exec('cd ./'.$random_dir.'; ls', $partition_list);
+
         foreach ($partition_list as $partition) {
 
             $file_path = './'.$random_dir.'/'.$partition;
@@ -71,18 +72,22 @@ class HomeController extends Controller
             }
 
             Storage::disk('storage1')->putFileAs($random_dir, $uploadedFile, $partition);
+            Log::info($file_path);
+            Log::info(hash_file('md5', $file_path));
             $stored_file->file_partitions()->create([
                 'partition' => $partition,
                 'storage' => 'storage1',
                 'dir' => $random_dir,
-                'size' => $uploadedFile->getSize()
+                'size' => $uploadedFile->getSize(),
+                'hash' => hash_file('md5', $file_path),
             ]);
             Storage::disk('storage2')->putFileAs($random_dir, $uploadedFile, $partition);
             $stored_file->file_partitions()->create([
                 'partition' => $partition,
                 'storage' => 'storage2',
                 'dir' => $random_dir,
-                'size' => $uploadedFile->getSize()
+                'size' => $uploadedFile->getSize(),
+                'hash' => hash_file('md5', $file_path),
             ]);
         }
 
